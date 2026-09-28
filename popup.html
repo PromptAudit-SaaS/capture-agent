@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>PromptAudit Capture Agent</title>
+    <style>
+      body {
+        font-family: "DM Sans", system-ui, sans-serif;
+        background: #101826;
+        color: #f1f4f5;
+        width: 300px;
+        margin: 0;
+        padding: 16px;
+      }
+      h1 { font-size: 14px; margin: 0 0 4px; }
+      p { font-size: 12px; color: #9fb0c3; margin: 0 0 12px; }
+      label { font-size: 11px; color: #9fb0c3; display: block; margin-bottom: 4px; }
+      input {
+        width: 100%; box-sizing: border-box; padding: 8px; margin-bottom: 8px;
+        background: #273441; border: 1px solid #3d4f63; border-radius: 4px; color: #f1f4f5;
+      }
+      button {
+        width: 100%; padding: 8px; border: 0; border-radius: 4px; cursor: pointer;
+        background: #a72232; color: #fff; font-weight: 600; margin-bottom: 6px;
+      }
+      button.secondary { background: #273441; border: 1px solid #3d4f63; }
+      #status { font-size: 11px; color: #6fbf73; min-height: 14px; }
+    </style>
+  </head>
+  <body>
+    <h1>PromptAudit Capture Agent</h1>
+    <p>Zero-Knowledge: Verschlüsselung ausschliesslich lokal (AES-256-GCM).</p>
+    <label for="pass">Mandanten-Passphrase</label>
+    <input id="pass" type="password" placeholder="Passphrase eingeben…" />
+    <button id="save">Passphrase setzen</button>
+    <button id="verify" class="secondary">Integrität prüfen</button>
+    <div id="status"></div>
+    <script src="popup.js"></script>
+  </body>
+</html>

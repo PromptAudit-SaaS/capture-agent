@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "PromptAudit Capture Agent",
+  "version": "1.0.0",
+  "description": "Zero-Knowledge Capture Agent: verschluesselt KI-Prompts lokal im Browser (AES-256-GCM) und versiegelt sie in einer append-only Hashkette. Kein Klartext verlaesst das Geraet.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://copilot.microsoft.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://copilot.microsoft.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PromptAudit Capture Agent"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

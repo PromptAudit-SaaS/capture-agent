@@ -1,33 +1,39 @@
-# PromptAudit — Client-Side Zero-Knowledge Capture Agent
+# PromptAudit Capture Agent
 
-This repository contains the cryptographic core architecture of the PromptAudit Capture Agent (Browser Extension).
+Zero-Knowledge-Browser-Erweiterung (Manifest V3) zur manipulationssicheren
+Protokollierung von KI-Prompts.
 
-## Security & Compliance Architecture
+## Prinzip
 
-PromptAudit is designed for strict compliance with the revised Swiss Data Protection Act (DSG), the EU AI Act (Art. 12), and GDPR (Art. 32). It enforces a strict zero-knowledge architecture:
+- **Zero-Knowledge:** Prompts werden ausschliesslich lokal im Browser mit
+  AES-256-GCM verschluesselt. Der Schluessel wird per PBKDF2-SHA256
+  (210'000 Iterationen) aus der Mandanten-Passphrase abgeleitet und niemals
+  uebertragen oder dauerhaft gespeichert.
+- **WORM:** Jeder Eintrag wird mit einem SHA-256-Hash versiegelt, der den
+  Hash des Vorgaengers enthaelt (append-only Hashkette). Es existiert kein
+  Aenderungs- oder Loeschpfad.
+- **Kein Netzwerkverkehr:** Die Erweiterung sendet keine Daten an externe
+  Server. Gespeichert wird lokal via `chrome.storage.local`.
 
-* **Local Encryption:** All AI prompts and responses are encrypted directly within the employee's browser context using **AES-256-GCM**.
-* **Key Derivation:** Encryption keys are derived locally via **PBKDF2-SHA256** with 210,000 iterations. Plaintext keys are never transmitted to our servers and are never stored.
-* **Immutable Audit Trail:** Encrypted payloads are chained into an append-only cryptographic ledger (WORM SHA-256 hash chain). There is no technical path for deletion or alteration.
+## Dateien
 
-## Cryptographic Reference (Web Crypto API)
+| Datei          | Zweck                                                          |
+| -------------- | -------------------------------------------------------------- |
+| `manifest.json`| Manifest V3: Berechtigungen, Content Scripts, Service Worker   |
+| `background.js`| Kryptographie (AES-256-GCM, PBKDF2), Hashkette, Verifizierung  |
+| `content.js`   | Erfassung der Prompts auf ChatGPT, Claude, Gemini, Copilot     |
+| `popup.html`   | Oberflaeche: Passphrase setzen, Integritaet pruefen            |
+| `popup.js`     | Logik der Oberflaeche                                          |
 
-```typescript
-// Enforced local encryption inside the browser extension sandbox
-const key = await crypto.subtle.deriveKey(
-  { name: "PBKDF2", salt, hash: "SHA-256", iterations: 210000 },
-  baseKey,
-  { name: "AES-GCM", length: 256 },
-  false,
-  ["encrypt", "decrypt"]
-);
+## Installation (Entwicklungsmodus)
 
-const ciphertext = await crypto.subtle.encrypt(
-  { name: "AES-GCM", iv },
-  key,
-  plaintext
-);
-```
+1. Chrome oeffnen → `chrome://extensions`
+2. «Entwicklermodus» aktivieren
+3. «Entpackte Erweiterung laden» → diesen Ordner waehlen
+4. Ueber das Erweiterungs-Symbol die Mandanten-Passphrase setzen
 
-## Compliance Audit
-This open-source component allows internal corporate IT security teams and external auditors to mathematically verify that zero cleartext prompts ever leave the corporate infrastructure.
+## Verifizierung
+
+Die Integritaet der Hashkette laesst sich jederzeit ueber das Popup
+(«Integritaet prüfen») oder programmgesteuert ueber die Nachricht
+`PROMPTAUDIT_VERIFY` pruefen.
